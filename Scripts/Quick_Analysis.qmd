@@ -1,0 +1,84 @@
+---
+title: "Quick Analysis"
+author: "Tobias M. Osborne"
+format: html
+---
+
+# Introduction
+
+## About the data
+
+The data for this was downloaded from the [Arctic Data Center](https://arcticdata.io/) on 10/07/2024.
+
+## Setup
+
+Attach important packages.
+
+```{r}
+library(readr)
+library(here)
+```
+
+## Read in the data
+
+```{r}
+#| message: false
+#| warning: false
+
+bg_chem <- read_csv(here('Data', 'BGchem2008data.csv'))
+
+```
+
+# Analysis
+
+## Calculate the summary stats
+
+```{r}
+#|eval: false
+#|echo: false
+
+### print the colum names
+colnames(bg_chem)
+
+### general structer
+str(bg_chem)
+
+### First sic lines
+head(bg_chem)
+
+### Get a summary of each colum
+summary(bg_chem)
+
+### Unique values of a colum
+unique(bg_chem$Data)
+```
+
+Calculate the summary statistics for nitrate, nitrite, and other...
+
+```{r}
+nitrate <- mean(bg_chem$NO3)
+nitrite <- mean(bg_chem$NO2)
+amm <- mean(bg_chem$NH4)
+phos <- mean(bg_chem$P)
+
+```
+
+## Calculate the mean Redfield ration
+
+```{r}
+
+ratio <- (nitrate + nitrite + amm) / phos
+```
+
+The Redfield ratio is `r round(ratio)`
+
+## Plot Redfield ratio
+
+```{r}
+
+plot(bg_chem$P, bg_chem$NO2 + bg_chem$NO3 + bg_chem$NH4, 
+     xlab = "P", ylab = "Sum of Nitrogen Compounds",
+     main = "Relationship between P and Nitrogen Compounds")
+```
+
+## Calculations

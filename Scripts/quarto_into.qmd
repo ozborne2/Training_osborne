@@ -1,0 +1,52 @@
+---
+title: "intro to Quarto"
+author: "Tobias M. Osborne"
+format: html
+editor: visual
+execute:
+  warning: false
+  message: false
+bibliography: references.bib
+---
+
+# Level 1 Header
+
+This is regular old boring text
+
+## Level 2 Header
+
+*bullet list* list item 2 \*indented bullet
+
+1.  number list
+2.  list item 2
+
+Here is some more plain text. But if you want *italics* or *italics*. This is **bold**
+
+```{important code}
+x <- 1+2
+
+```
+
+My important result is `r x` (this is an in-line code)
+or another important thing is `r 6*7`.
+
+```{r}
+x <- 4*8
+
+height_ft <- c(5.2,6.0, 5.7)
+
+coef <- 3.14
+```
+
+
+| Col1    | Col2 | Col3 |
+|---------|------|------|
+| thing 1 | 1    |      |
+| thing 2 | 2    |      |
+| thing 3 | 3    |      |
+|         | 4    |      |
+|         | 5    |      |
+
+: Table 1
+
+[@oke2020]
