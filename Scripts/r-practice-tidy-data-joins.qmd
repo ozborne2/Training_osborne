@@ -13,8 +13,9 @@ library(here)
 library(lubridate) 
 ```
 
-### Load data from the URLs
+#Exercise 1: Practice Joins
 
+### Load data from the URLs
 
 ```{r}
 
@@ -30,3 +31,109 @@ head(sites)
 head(taxalist)
 ```
 
+### Get familiar with the data
+
+In this next code chunk, I viewed the structure, did some summary statistics, and did a glimpse.
+
+```{r}
+
+# View structure
+str(bird_observations)
+str(surveys)
+str(sites)
+str(taxalist)
+
+# Summary statistics
+summary(bird_observations)
+summary(surveys)
+summary(sites)
+summary(taxalist)
+
+# Glimpse (from dplyr)
+glimpse(bird_observations)
+glimpse(surveys)
+glimpse(sites)
+glimpse(taxalist)
+
+```
+
+### Create a subset of bird_observations
+
+```{r}
+# - species_id is either "BHCO" or "RWBL"
+# - and site_id is either "LI-W" or "NU-C"
+birds_subset <- bird_observations %>%
+  filter(
+    species_id %in% c("BHCO", "RWBL"),    # Select rows where species_id is "BHCO" or "RWBL"
+    site_id %in% c("LI-W", "NU-C")        # Select rows where site_id is "LI-W" or "NU-C"
+  )
+
+# Display the first few rows of the filtered data to check the result
+head(birds_subset)
+```
+
+### Use left_join() to merge birds_subset with the tables sites
+
+```{r}
+# Perform a left join to add site information to birds_subset (GPT)
+birds_left <- left_join(birds_subset, sites, by = "site_id")
+
+# Check the first few rows to make sure the join worked as expected
+head(birds_left)
+```
+
+or
+
+```{r}
+# syntax using pipe
+birds_left <- birds_subset %>% 
+  left_join(y = sites, by = "site_id")
+# don't see x = birds_subset here because piping in birds_subset means it automatically assumes birds_subset as x.
+
+# syntax without pipe
+birds_left <- left_join(x = birds_subset, y = sites, by = "site_id")
+
+head(birds_left)
+
+```
+
+### Use full_join() to merge birds_subset and sites tables
+
+```{r}
+# Without using the pipe syntax to perform a full join (GPT)
+birds_full <- full_join(x = birds_subset, y = sites, by = "site_id")
+
+head(birds_full)
+
+```
+
+### Use inner_join() to merge birds_subset and taxalist data
+
+```{r}
+# Using pipe syntax to perform an inner join (GPT)
+birds_inner <- birds_subset %>%
+  inner_join(taxalist, by = "species_id")
+
+# Check the result
+head(birds_inner)
+```
+
+or
+
+```{r}
+# syntax using pipe
+birds_inner <- birds_subset %>% 
+  inner_join(y = taxalist, by = "species_id")
+
+# syntax without pipe
+birds_inner <- inner_join(x = birds_subset, y = taxalist, by = "species_id" )
+
+head(birds_inner)
+
+```
+
+# Exercise 2: Practice Wrangling & Joining Data
+
+```{r}
+
+```
