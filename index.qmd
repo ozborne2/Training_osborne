@@ -6,3 +6,13 @@ format: html
 
 This is all the material from the CoreR course (October 7-11 2024)
 
+## Course Leasons
+-[Intro to Lit Analysis](Scipts/Quick_Analysis.html)
+-[Cleaning and Wrangling Data](cleaning_and_wrangling)
+-Data Visualization
+-Functions
+
+## Prectice Sessions
+-P I
+-P II
+-P III
