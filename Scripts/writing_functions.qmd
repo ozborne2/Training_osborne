@@ -1,0 +1,311 @@
+---
+title: "Writing Functions"
+author: "Tobias M. Osborne"
+format: 
+  html: 
+  toc: true
+  code-fold: true
+  embed-resources: true
+  
+---
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+# Temp conversion
+```{r}
+airtemps <- c(212, 30.3, 78, 32)
+celsius1 <- (airtemps[1] - 32) * 5 / 9
+celsius2 <- (airtemps[2] - 32) * 5 / 9
+celsius3 <- (airtemps[3] - 32) * 5 / 9
+
+```
+
+```{r}
+conver_f_to_c <- function(fahr){
+  celsius <- (fahr - 32) * 5 / 9
+  return(celsius)
+}
+
+celsius1a <-conver_f_to_c(airtemps[1])
+
+conver_f_to_c(airtemps)
+```
+
+### Exer: convert celsius to fahrenheit (GPT)
+
+```{r}
+# Define the function to convert Celsius to Fahrenheit
+convert_c_to_f <- function(celsius) {
+  fahrenheit <- (celsius * 9 / 5) + 32
+  return(fahrenheit)
+}
+
+# Test the function with some Celsius values
+celsius_temps <- c(0, 100, 20, -40)
+
+# Convert the Celsius temperatures to Fahrenheit
+fahrenheit_temps <- convert_c_to_f(celsius_temps)
+
+# Output the result
+fahrenheit_temps
+
+```
+
+GPT test
+```{r}
+# Define the function to convert Fahrenheit to Celsius
+convert_f_to_c <- function(fahr) {
+  celsius <- (fahr - 32) * 5 / 9
+  return(celsius)
+}
+
+# Define the function to convert Celsius to Kelvin
+convert_c_to_k <- function(celsius) {
+  kelvin <- celsius + 273.15
+  return(kelvin)
+}
+
+# Create a vector of Fahrenheit temperatures
+airtemps_f <- c(212, 30.3, 78, 32)
+
+# Step 1: Convert Fahrenheit to Celsius
+airtemps_c <- convert_f_to_c(airtemps_f)
+
+# Step 2: Convert Celsius to Kelvin
+airtemps_k <- convert_c_to_k(airtemps_c)
+
+# Output the result in Celsius and Kelvin
+airtemps_c
+airtemps_k
+
+list(airtemps, airtemps_c, airtemps_f, airtemps_k)
+
+```
+
+
+# Pass back as a list output (csv)
+
+```{r}
+# Define the function to convert Fahrenheit to Celsius
+convert_f_to_c <- function(fahr) {
+  celsius <- (fahr - 32) * 5 / 9
+  return(celsius)
+}
+
+# Define the function to convert Celsius to Kelvin
+convert_c_to_k <- function(celsius) {
+  kelvin <- celsius + 273.15
+  return(kelvin)
+}
+
+# Create a vector of Fahrenheit temperatures
+airtemps_f <- c(212, 30.3, 78, 32)
+
+# Step 1: Convert Fahrenheit to Celsius
+airtemps_c <- convert_f_to_c(airtemps_f)
+
+# Step 2: Convert Celsius to Kelvin
+airtemps_k <- convert_c_to_k(airtemps_c)
+
+# Step 3: Combine results into a list
+temperature_conversions <- list(
+  Fahrenheit = airtemps_f,
+  Celsius = airtemps_c,
+  Kelvin = airtemps_k
+)
+
+# Step 4: Convert the list into a data frame for saving
+temperature_df <- as.data.frame(temperature_conversions)
+
+# Step 5: Save the data frame as a CSV file
+write.csv(temperature_df, file = "temperature_conversions.csv", row.names = FALSE)
+
+# Output the temperature conversions list
+temperature_df
+
+```
+
+
+```{r}
+
+```
+
+# Plot
+
+```{r}
+library(ggplot2)
+library(tidyr)
+
+# Create a data frame with the temperature data
+temperature_data <- data.frame(
+  Point = c(1, 2, 3, 4),
+  Fahrenheit = c(212.0, 30.3, 78.0, 32.0),
+  Celsius = c(100.0000000, -0.9444444, 25.5555556, 0.0000000),
+  Kelvin = c(373.1500, 272.2056, 298.7056, 273.1500)
+)
+
+# Reshape the data for plotting with ggplot2
+temperature_data_long <- pivot_longer(temperature_data, 
+                                      cols = c(Fahrenheit, Celsius, Kelvin), 
+                                      names_to = "Scale", 
+                                      values_to = "Temperature")
+
+# Plot the data with points and lines
+ggplot(temperature_data_long, aes(x = Point, y = Temperature, color = Scale)) +
+  geom_point(size = 3) + # Add points
+  geom_line(size = 1) +  # Add lines
+  labs(title = "Temperature Conversions: Fahrenheit, Celsius, Kelvin",
+       x = "Point",
+       y = "Temperature",
+       color = "Temperature Scale") +
+  theme_minimal()
+
+
+```
+
+
+```{r}
+library(ggplot2)
+library(tidyr)
+
+# Define the custom theme function
+custom_theme <- function(base_size = 9) {
+  ggplot2::theme(
+    text             = element_text(family = 'serif', 
+                                    color = 'gray30', 
+                                    size = base_size),
+    plot.title       = element_text(size = rel(1.25), 
+                                    hjust = 0.5, 
+                                    face = 'bold'),
+    panel.background = element_rect(fill = 'azure'),
+    panel.border     = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(colour = 'grey90', 
+                                    linewidth = 0.25),
+    legend.position  = 'right',
+    legend.key       = element_rect(colour = NA, 
+                                    fill = NA),
+    axis.ticks       = element_blank(),
+    axis.line        = element_blank()
+  )
+}
+
+# Create a data frame with the temperature data
+temperature_data <- data.frame(
+  Point = c(1, 2, 3, 4),
+  Fahrenheit = c(212.0, 30.3, 78.0, 32.0),
+  Celsius = c(100.0000000, -0.9444444, 25.5555556, 0.0000000),
+  Kelvin = c(373.1500, 272.2056, 298.7056, 273.1500)
+)
+
+# Reshape the data for plotting with ggplot2
+temperature_data_long <- tidyr::pivot_longer(temperature_data, 
+                                             cols = c(Fahrenheit, Celsius, Kelvin), 
+                                             names_to = "Scale", 
+                                             values_to = "Temperature")
+
+# Plot the data with points, lines, and labels
+ggplot(temperature_data_long, aes(x = Point, y = Temperature, color = Scale)) +
+  geom_point(size = 3) +   # Add points
+  geom_line(size = 1) +    # Add lines
+  geom_text(aes(label = round(Temperature, 2)), vjust = -1, size = 3) +  # Add labels above points
+  labs(title = "Temperature Conversions: Fahrenheit, Celsius, Kelvin",
+       x = "Point",
+       y = "Temperature",
+       color = "Temperature Scale") +
+  custom_theme(10)         # Apply the custom theme
+
+```
+
+TEst_______________
+
+```{r}
+# Temp conversion example
+airtemps <- c(212, 30.3, 78, 32)
+celsius1 <- (airtemps[1] - 32) * 5 / 9
+celsius2 <- (airtemps[2] - 32) * 5 / 9
+celsius3 <- (airtemps[3] - 32) * 5 / 9
+
+```
+
+```{r}
+# Fahrenheit to Celsius
+convert_f_to_c <- function(fahr){
+  celsius <- (fahr - 32) * 5 / 9
+  return(celsius)
+}
+
+# Celsius to Fahrenheit
+convert_c_to_f <- function(celsius) {
+  fahrenheit <- (celsius * 9 / 5) + 32
+  return(fahrenheit)
+}
+
+# Testing conversion functions
+airtemps <- c(212, 30.3, 78, 32)
+convert_f_to_c(airtemps)
+convert_c_to_f(c(100, 0, -40))
+
+```
+
+```{r}
+# Convert Fahrenheit to Celsius, then to Kelvin, and save as CSV
+convert_f_to_c <- function(fahr) {
+  celsius <- (fahr - 32) * 5 / 9
+  return(celsius)
+}
+
+convert_c_to_k <- function(celsius) {
+  kelvin <- celsius + 273.15
+  return(kelvin)
+}
+
+airtemps_f <- c(212, 30.3, 78, 32)
+airtemps_c <- convert_f_to_c(airtemps_f)
+airtemps_k <- convert_c_to_k(airtemps_c)
+
+# Save the result as a CSV
+temperature_conversions <- data.frame(Fahrenheit = airtemps_f, Celsius = airtemps_c, Kelvin = airtemps_k)
+write.csv(temperature_conversions, file = "temperature_conversions.csv", row.names = FALSE)
+
+```
+
+```{r}
+# Create a directory called "Plots" if it doesn't exist
+if (!dir.exists("Plots")) {
+  dir.create("Plots")
+}
+
+# Create a plot with custom theme and labels
+temperature_data <- data.frame(
+  Point = c(1, 2, 3, 4),
+  Fahrenheit = c(212.0, 30.3, 78.0, 32.0),
+  Celsius = c(100.0000000, -0.9444444, 25.5555556, 0.0000000),
+  Kelvin = c(373.1500, 272.2056, 298.7056, 273.1500)
+)
+
+temperature_data_long <- tidyr::pivot_longer(temperature_data, 
+                                             cols = c(Fahrenheit, Celsius, Kelvin), 
+                                             names_to = "Scale", 
+                                             values_to = "Temperature")
+
+# Create the plot
+temp_plot <- ggplot(temperature_data_long, aes(x = Point, y = Temperature, color = Scale)) +
+  geom_point(size = 3) + 
+  geom_line(size = 1) +  
+  geom_text(aes(label = round(Temperature, 2)), vjust = -1, size = 3) + 
+  labs(title = "Temperature Conversions: Fahrenheit, Celsius, Kelvin",
+       x = "Point",
+       y = "Temperature",
+       color = "Temperature Scale") +
+  custom_theme(10)
+
+# Save the plot in the "Plots" folder
+ggsave(filename = "Plots/temperature_plot.png", plot = temp_plot, width = 8, height = 6)
+
+```
+
+
