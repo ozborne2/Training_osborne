@@ -1,0 +1,178 @@
+---
+title: "Intro to Spatial Data in R"
+author: "Tobias M. Osborne"
+format: html
+---
+
+## Downloading Data
+
+```{r}
+knb_url <- "https://dev.nceas.ucsb.edu/knb/d1/mn/v2/object/urn%3Auuid%3Aaceaecb2-1ce0-4d41-a839-d3607d32bb58"
+
+download.file(url = knb_url, destfile = 
+'../shapefile_demo_data.zip')
+
+unzip('../shapefile_demo_data.zip', exdir = '../Data')
+
+file.remove('../shapefile_demo_data.zip')
+```
+
+## Set Up
+
+```{r}
+library(readr)
+library(sf)
+library(ggplot2)
+library(leaflet)
+library(scales)
+library(ggspatial)
+library(dplyr)
+library(here)
+```
+
+## Read region data
+
+```{r}
+# read in shapefile using read_sf()
+ak_regions <- read_sf(here("Data", "ak_regions_simp.shp"))
+
+# quick plot
+plot(ak_regions)
+
+class(ak_regions)
+
+head(ak_regions)
+
+glimpse(ak_regions)
+
+st_crs(ak_regions)
+```
+
+## Trasforming CRS
+
+```{r}
+ak_regions_3338 <- ak_regions %>% 
+  st_transform(crs = 3338)
+
+plot(ak_regions_3338)
+
+
+st_crs(ak_regions_3338)
+```
+
+## `sf` and the `tidyverse`
+
+```{r}
+ak_regions_3338 %>% 
+  select(region)
+```
+
+Filter for region
+
+```{r}
+ak_regions_3338 %>% 
+  filter(region == "Southeast")
+```
+
+## Spatial Joins
+
+Read popualtion data
+```{r}
+pop <- read_csv(here("Data", "alaska_population.csv"))
+
+head(pop)
+class(pop)
+```
+
+Convert pop data into a spatial object
+
+```{r}
+pop_4326 <- st_as_sf(pop,
+                     coords = c("lng","lat"),
+                     crs = 4326, 
+                     remove = FALSE)
+
+head(pop_4326)
+```
+
+
+join pop data with region
+
+```{r}
+ pop_joined <- st_join(pop_4326,
+                       ak_regions_3338,
+                       join = st_within)
+```
+
+Trasnform
+
+```{r}
+pop_3338 <- st_transform(pop_4326,
+                         crs = 3338)
+```
+
+join with crs
+```{r}
+pop_joined <- st_join(pop_3338,
+                      ak_regions_3338, 
+                      join = st_within)
+
+head(pop_joined)
+```
+
+
+Calc total pop by region
+
+```{r}
+
+pop_region <- pop_joined %>%
+    as.data.frame() %>%
+    group_by(region) %>%
+    summarise(total_pop = sum(population))
+
+head(pop_region)
+```
+
+
+Joining region with pop (HELP) -----------------------
+
+```{r}
+pop_region_3338 <- left_join(ak_regions_3338, 
+                             pop_region, 
+                             by = "region")
+
+# plot to check
+plot(pop_region_3338["total_pop"])
+
+```
+
+Calc total pop by region
+
+```{r}
+pop_mgmt_3338 <- pop_region_3338 %>%
+    group_by(mgmt_area) %>%
+    summarize(total_pop = sum(total_pop),
+              do_union = F)
+
+plot(pop_mgmt_3338["total_pop"])
+```
+
+
+## Visualize with ggplot
+
+```{r}
+ggplot(pop_region_3338) +
+    geom_sf(aes(fill = total_pop)) +
+    labs(fill = "Total Population") +
+    scale_fill_continuous(low = "khaki",
+                          high =  "firebrick",
+                          labels = comma) +
+    theme_bw()
+```
+
+
+Rivers
+```{r}
+rivers_3338 <- read_sf("Data/ak_rivers_simp.shp")
+```
+
