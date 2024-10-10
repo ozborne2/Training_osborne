@@ -151,5 +151,11 @@ ggplot(data = daily_visits_total,
   
 ```
 
+### Saving plot
+
+```{r}
+ggsave("../Plots/visits_restore_site_delts.jpg", width = 12, height = 6, units = "in")
+```
+
 
 
